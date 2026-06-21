@@ -16,11 +16,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Autowired
+    // spring security calls this when checking login password
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
+    // load user from db for authenticationManager
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Collection<User> users = userRepository.findUserByUsername(username);
 

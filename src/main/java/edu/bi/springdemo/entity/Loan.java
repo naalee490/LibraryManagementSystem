@@ -1,5 +1,6 @@
 package edu.bi.springdemo.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -19,8 +20,15 @@ public class Loan {
     @JoinColumn(name = "userID", nullable = false)
     private User user;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate borrowDate;
-    private String status; //e.g. "BORROWED" or "RETURNED"
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dueDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate returnDate;
+    private String status;
 
     //getters and setters
     public Integer getLoanID() { return loanID; }
@@ -35,6 +43,21 @@ public class Loan {
     public LocalDate getBorrowDate() { return borrowDate; }
     public void setBorrowDate(LocalDate borrowDate) { this.borrowDate = borrowDate; }
 
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
+
+    public LocalDate getReturnDate() { return returnDate; }
+    public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    @PrePersist
+    @PreUpdate
+    // due date is always exactly 1 month after borrow date
+    public void syncDueDate() {
+        if (borrowDate != null) {
+            dueDate = borrowDate.plusMonths(1);
+        }
+    }
 }

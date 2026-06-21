@@ -10,6 +10,6 @@ import java.util.List;
 public interface BookRepository extends CrudRepository<Book, Integer> {
     boolean existsByIsbn(String isbn);
 
-    //Search method for readers
+    // catalogue search by title or author
     List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String author);
 }

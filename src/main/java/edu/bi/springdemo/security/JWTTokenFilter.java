@@ -19,20 +19,28 @@ public class JWTTokenFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
 
     public  JWTTokenFilter(JwtTokenService jwtTokenService){
+        // runs on every request before controllers
         this.jwtTokenService = jwtTokenService;
     }
 
     @Override
+    // check Authorization header, if Bearer token ok then set spring security context
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+        // let CORS preflight through without wiping auth checks on real requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(header!=null && header.startsWith("Bearer ")){
             String token = header.split(" ")[1];
             try {
                 String username = jwtTokenService.extractUsername(token);
-                String role = jwtTokenService.extractRole(token);
+                String role = RoleNormalizer.normalize(jwtTokenService.extractRole(token));
 
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(username,

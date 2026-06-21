@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
+    // swagger UI - add Authorize button for JWT testing
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 //require the security scheme globally

@@ -9,6 +9,13 @@ import java.util.List;
 
 @Repository
 public interface LoanRepository extends CrudRepository<Loan, Integer> {
-    //Find loans for a specific user
+    // all loans belonging to one reader
     List<Loan> findByUser(User user);
+
+    List<Loan> findByUser_Id(Integer userId);
+
+    void deleteByUser_Id(Integer userId);
+
+    // true if book still has BORROWED status
+    boolean existsByBook_BookIDAndStatus(Integer bookId, String status);
 }

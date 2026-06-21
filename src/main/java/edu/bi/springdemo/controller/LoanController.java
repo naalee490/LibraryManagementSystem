@@ -17,16 +17,18 @@ public class LoanController {
 
     @Autowired
     public LoanController(LoanService loanService) {
+        // inject loan service
         this.loanService = loanService;
     }
 
     @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
+    // borrow button on frontend calls this
     public Loan addLoan(@RequestBody LoanDTO loanDto) {
         return loanService.saveLoan(loanDto);
     }
 
     @GetMapping("/getAll")
+    // desk returns page - all loans in system
     public Iterable<Loan> getAllLoans() {
         return loanService.getAllLoans();
     }

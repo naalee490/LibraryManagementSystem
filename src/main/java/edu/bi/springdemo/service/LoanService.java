@@ -22,11 +22,13 @@ public class LoanService {
 
     @Autowired
     public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository) {
+        // all 3 repos needed for borrow/return flow
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
 
+    // reader borrows online - 1 copy less on shelf, loan for 1 month
     public Loan saveLoan(LoanDTO loanDto) {
         //fetch the actual Book object from the database
         Book book = bookRepository.findById(loanDto.getBookID())
@@ -35,6 +37,10 @@ public class LoanService {
         //fetch the actual User object from the database using UserRepository
         User user = userRepository.findById(loanDto.getUserID())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + loanDto.getUserID()));
+
+        if ("ROLE_ADMIN".equals(user.getRole())) {
+            throw new BadRequestException("Admins cannot borrow books.");
+        }
 
         //Exception for Bad Request (0 copies)
         if (book.getAvailableCopies() <= 0) {
@@ -47,20 +53,23 @@ public class LoanService {
 
         //create and save the new Loan using the actual objects
         Loan loan = new Loan();
-        loan.setBook(book); //Passes the full object
-        loan.setUser(user); //-||-
-        loan.setBorrowDate(LocalDate.now());
+        loan.setBook(book);
+        loan.setUser(user);
+        LocalDate borrowDate = LocalDate.now();
+        loan.setBorrowDate(borrowDate);
+        loan.setDueDate(borrowDate.plusMonths(1));
         loan.setStatus("BORROWED");
 
         return loanRepository.save(loan);
     }
 
+    // desk returns - every loan in db
     public Iterable<Loan> getAllLoans() {
         return loanRepository.findAll();
     }
 
 
-    //Return a book
+    // librarian marks return at desk - copy goes back to inventory
     public Loan returnBook(Integer loanId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + loanId));
@@ -71,6 +80,7 @@ public class LoanService {
 
         //Update loan status
         loan.setStatus("RETURNED");
+        loan.setReturnDate(LocalDate.now()); // Zapisz, kiedy faktycznie oddano
 
         //Give the copy back to the book inventory
         Book book = loan.getBook();
@@ -80,7 +90,7 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-    //View personal loan history
+    // my loans page - only this users history
     public Iterable<Loan> getMyLoans(String username) {
         User user = userRepository.findUserByUsername(username).iterator().next();
         return loanRepository.findByUser(user);

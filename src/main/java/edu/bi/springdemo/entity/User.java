@@ -32,6 +32,12 @@ public class User implements UserDetails {
 
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private boolean isActive = true;
+
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
+
     //getters and setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -62,6 +68,7 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @Override
+    // spring security reads role from here
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
     }
@@ -80,5 +87,8 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @Override
-    public boolean isEnabled() { return true; }
+    // inactive librarians cant login till admin approves
+    public boolean isEnabled() {
+        return this.isActive;
+    }
 }

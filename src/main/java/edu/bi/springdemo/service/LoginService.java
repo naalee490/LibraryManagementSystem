@@ -4,6 +4,7 @@ import edu.bi.springdemo.entity.User;
 import edu.bi.springdemo.entity.exception.LoginPasswordException;
 import edu.bi.springdemo.repository.UserRepository;
 import edu.bi.springdemo.security.JwtTokenService;
+import edu.bi.springdemo.security.RoleNormalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,14 +21,16 @@ public class LoginService {
 
     @Autowired
     public LoginService(UserRepository userRepository, JwtTokenService jwtTokenService, AuthenticationManager authenticationManager) {
+        // auth manager checks password, jwt builds token after
         this.userRepository = userRepository;
         this.jwtTokenService = jwtTokenService;
         this.authenticationManager = authenticationManager;
     }
 
+    // checks credentials then returns JWT string
     public String login(String username, String password) {
         try {
-            // Let Spring Security handle the database lookup and password matching securely
+            // spring checks password hash for us
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
@@ -39,6 +42,7 @@ public class LoginService {
         Collection<User> list = userRepository.findUserByUsername(username);
         User user = list.iterator().next();
 
-        return jwtTokenService.generateToken(username, user.getRole());
+        // build JWT with username + role inside
+        return jwtTokenService.generateToken(username, RoleNormalizer.normalize(user.getRole()));
     }
 }
