@@ -1,0 +1,25 @@
+/* Admin stock field: wide enough for digits; no spinner overlap */
+.stock-input {
+    width: 5.5rem;
+    min-width: 5.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.stock-input[type="number"]::-webkit-outer-spin-button,
+.stock-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.catalog-stock-cell {
+    width: 6.5rem;
+    white-space: nowrap;
+}
