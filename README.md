@@ -10,7 +10,6 @@ Full-stack library application with a Spring Boot backend and React frontend.
 - Online borrowing and desk returns
 - Member and admin management
 
-
 ## Tech stack
 
 - **Backend:** Spring Boot, MySQL, JWT
