@@ -9,7 +9,7 @@ Full-stack library application with a Spring Boot backend and React frontend.
 - Book catalogue and search
 - Online borrowing and desk returns
 - Member and admin management
-- Swagger API documentation
+
 
 ## Tech stack
 
