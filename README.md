@@ -24,4 +24,4 @@ Full-stack library application with a Spring Boot backend and React frontend.
 2. Set environment variables:
    ```bash
    export DB_PASSWORD='your_mysql_password'
-</user_query>
+
