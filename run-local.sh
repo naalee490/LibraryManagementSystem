@@ -13,8 +13,8 @@ if [ -z "$DB_PASSWORD" ]; then
   exit 1
 fi
 
-if [ -z "$jwt.key" ]; then
-  export jwt.key='...'
+: "${JWT_SECRET:?ERROR: Set JWT_SECRET before running}"
+export JWT_SECRET
 fi
 
 echo "Starting Spring Boot on http://localhost:8080 ..."
