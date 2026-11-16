@@ -14,7 +14,7 @@ if [ -z "$DB_PASSWORD" ]; then
 fi
 
 if [ -z "$jwt.key" ]; then
-  export jwt.key='***REMOVED***'
+  export jwt.key='...'
 fi
 
 echo "Starting Spring Boot on http://localhost:8080 ..."
